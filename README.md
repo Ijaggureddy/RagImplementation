@@ -245,7 +245,7 @@ spring:
 | Property | Purpose |
 |----------|---------|
 | `GEMINI_API_KEY` | Set as environment variable, never hardcode |
-| `dimensions: 768` | Must match `text-embedding-004` output (not 1536 like OpenAI) |
+| `dimensions: 768` | Must match `text-embedding-004` output |
 | `initialize-schema: true` | Creates the pgvector extension and `vector_store` table automatically |
 | `max-file-size: 30MB` | Adjust based on your document sizes |
 
@@ -300,7 +300,7 @@ The `volumes:` top-level section in `compose.yaml` is missing or incorrectly ind
 Spring Security is locking down endpoints. Make sure `SecurityConfig.java` is in your project — it permits all `/api/rag/**` requests.
 
 ### Embedding dimension mismatch errors
-Ensure `spring.ai.vectorstore.pgvector.dimensions` matches your embedding model's output. Google's `text-embedding-004` outputs **768** dimensions, not 1536 (which is OpenAI's default). If you've already stored embeddings with a different dimension, wipe the volume and restart.
+Ensure `spring.ai.vectorstore.pgvector.dimensions` matches your embedding model's output. Google's `text-embedding-004` outputs **768** dimensions. If you've already stored embeddings with a different dimension, wipe the volume and restart.
 
 ---
 
