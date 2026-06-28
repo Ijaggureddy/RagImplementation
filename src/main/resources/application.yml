@@ -1,0 +1,46 @@
+server:
+  port: 8080
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
+spring:
+  application:
+    name: rag-implementation
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4
+          temperature: 0.7
+          max-tokens: 2048
+      embedding:
+        options:
+          model: text-embedding-3-small
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: gemini-2.0-flash      # fast + generous free quota (1500 req/day)
+            temperature: 0.7
+            max-output-tokens: 2048      # NOTE: Gemini uses max-output-tokens, not max-tokens
+        embedding:
+          api-key: ${GEMINI_API_KEY}     # embedding starter reads its own api-key property
+          text:
+            model: text-embedding-004
+    vectorstore:
+      pgvector:
+        dimensions: 768                 # text-embedding-004 outputs 768 dims, NOT 1536
+        distance-type: COSINE_DISTANCE
+        index-type: HNSW
+        initialize-schema: true         # creates the pgvector extension + table on first run
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.ai: INFO
