@@ -54,10 +54,6 @@ public class RagController {
      */
     @PostMapping("/chat")
     public ResponseEntity<RagQueryService.RagQueryResult> chat(@RequestBody ChatRequest request) {
-        // Fix: request.topK() was previously accepted by the API but never
-        // forwarded to the service, which always retrieved a hardcoded 5
-        // chunks. It's now passed through (ask() falls back to a default
-        // when topK is null or not positive).
         return ResponseEntity.ok(ragService.ask(request.query(), request.topK()));
     }
 

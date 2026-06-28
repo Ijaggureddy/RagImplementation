@@ -63,28 +63,20 @@ public class RagQueryService {
     public RagQueryResult ask(String question, Integer topK) {
         int effectiveTopK = (topK != null && topK > 0) ? topK : DEFAULT_TOP_K;
 
-        // Retrieve relevant documents from the vector store based on the question
         var relevantDocs = vectorStore.similaritySearch(
                 SearchRequest.builder().query(question).topK(effectiveTopK).build());
 
-        // Combine the content of the retrieved documents into a single context string
         StringBuilder contextBuilder = new StringBuilder();
         for (var doc : relevantDocs) {
             contextBuilder.append(doc.getText()).append("\n\n");
         }
         String context = contextBuilder.toString();
 
-        // Format the prompt with the context and question
         String prompt = String.format(RAG_QUERY_PROMPT, context, question);
 
-        // Use the chat client to get a response based on the prompt
         String response = chatClient.prompt(prompt)
                 .call()
                 .content();
-
-        // Fix: IngestionService stores the filename under the "source" metadata
-        // key, but this previously read it back under "fileName" — a key
-        // mismatch that meant every Source.fileName() came back as "Unknown".
         var sourceDocs = relevantDocs.stream()
                 .map(doc -> new Source(
                         String.valueOf(doc.getMetadata().getOrDefault("source", "Unknown")),
